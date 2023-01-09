@@ -25,10 +25,14 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
         main.cpp \
-        mainwindow.cpp
+        mainwindow.cpp \
+    gofl_board.cpp \
+    gofl_rulelist.cpp
 
 HEADERS += \
-        mainwindow.h
+        mainwindow.h \
+    gofl_board.h \
+    gofl_rulelist.h
 
 FORMS += \
         mainwindow.ui
