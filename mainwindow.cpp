@@ -1,23 +1,21 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include <QtDebug>
+// #include <QDateTime>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
-{    
-    int box_size;
+{
+    ui->setupUi(this);
+
+    int box_size = ui->tableView->height()/board.rowCount();
     qDebug() << QString("box_size: %1, table->height(): %2, board.rowCount(): %3")
                 .arg(box_size)
                 .arg(ui->tableView->height())
                 .arg(board.rowCount());
 
-
-    ui->setupUi(this);
-
     ui->tableView->setModel(&board);
-
-    box_size = ui->tableView->height()/board.rowCount();
 
     ui->tableView->rowHeight(box_size);
     ui->tableView->columnWidth(box_size);
@@ -37,9 +35,55 @@ MainWindow::MainWindow(QWidget *parent) :
     listRule.columnWidth(50);
     listRule.show();
 
+    qDebug() << QDateTime::currentDateTime().toString("yyyy.MM.dd hh:mm:ss");
+
+    qDebug() << "connecting: timeout() -> board.slot_Calculate() :";
+    qDebug() << connect(&data_calculate_timer,
+                        SIGNAL(timeout()),
+                        &board,
+                        SLOT(slot_GolfCalculate()));
+
+    qDebug() << "connecting pushButton_clear() -> board.slot_GolfBoardClear(): ";
+    qDebug() << connect(ui->pushButton_clear,
+                        SIGNAL(clicked()),
+                        &board,
+                        SLOT(slot_GolfBoardClear())
+                        );
+
+    qDebug() << "connecting pushButton_clear() -> board.slot_GolfBoardClear(): ";
+    qDebug() << connect(ui->pushButton_initial,
+                        SIGNAL(clicked()),
+                        &board,
+                        SLOT(slot_GolfBoardInitial())
+                        );
+
+
+    //PROBLEM Z PODLACZANIEM SYGNALU Z PARAMETREM
+    // qDebug() << "connecting : board.signal_GolfBoardCalculated(board.Golf_data) -> board.signal_GolfBoardCalculated(board.Golf_data):";
+    // qDebug() << connect(&board,
+    //                     SIGNAL(signal_GolfBoardCalculated(board.Golf_data)),
+    //                     &board,
+    //                     SLOT(slot_GolfBoardStateUpdate(board.Golf_data))
+    //                     );
+    qDebug() << "connecting : board.signal_GolfBoardCalculated() -> board.signal_GolfBoardCalculated():";
+    qDebug() << connect(&board,
+                        SIGNAL(signal_GolfBoardCalculated()),
+                        &board,
+                        SLOT(slot_GolfBoardStateUpdate())
+                        );
+
+
+
+
+    data_calculate_timer.setInterval(1000);
+    data_calculate_timer.setSingleShot(false);
+    data_calculate_timer.start();
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
 }
+
+//SYGNAŁY SĄ
+//GENEROWANE SA PRZEZ MOC  w moc_mainwindow.cpp

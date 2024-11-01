@@ -53,26 +53,26 @@
        <attribute name="horizontalHeaderVisible">
         <bool>false</bool>
        </attribute>
+       <attribute name="horizontalHeaderMinimumSectionSize">
+        <number>5</number>
+       </attribute>
        <attribute name="horizontalHeaderDefaultSectionSize">
         <number>10</number>
        </attribute>
        <attribute name="horizontalHeaderHighlightSections">
         <bool>false</bool>
        </attribute>
-       <attribute name="horizontalHeaderMinimumSectionSize">
-        <number>5</number>
-       </attribute>
        <attribute name="verticalHeaderVisible">
         <bool>false</bool>
+       </attribute>
+       <attribute name="verticalHeaderMinimumSectionSize">
+        <number>5</number>
        </attribute>
        <attribute name="verticalHeaderDefaultSectionSize">
         <number>10</number>
        </attribute>
        <attribute name="verticalHeaderHighlightSections">
         <bool>false</bool>
-       </attribute>
-       <attribute name="verticalHeaderMinimumSectionSize">
-        <number>5</number>
        </attribute>
       </widget>
      </item>
@@ -83,11 +83,26 @@
      <rect>
       <x>290</x>
       <y>10</y>
-      <width>111</width>
+      <width>131</width>
       <height>251</height>
      </rect>
     </property>
-    <layout class="QVBoxLayout" name="verticalLayout"/>
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
+      <widget class="QPushButton" name="pushButton_initial">
+       <property name="text">
+        <string>initial</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButton_clear">
+       <property name="text">
+        <string>clear</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
