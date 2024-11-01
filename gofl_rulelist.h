@@ -4,11 +4,14 @@
 #include <QAbstractTableModel>
 #include <QObject>
 #include <QTimer>
+#include "T_Golf_engine.h"
+
+extern T_Golf_engine Golf_engine;
 
 class gOfL_ruleList : public QAbstractTableModel
 {
     Q_OBJECT
-    QTimer *timer;
+    
 public:
     gOfL_ruleList(QObject *parent = nullptr);
     void timerHit();
