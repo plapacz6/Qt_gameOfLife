@@ -1,5 +1,5 @@
-#ifndef GOFL_RULELIST_H
-#define GOFL_RULELIST_H
+#ifndef GOLF_RULELIST_H
+#define GOLF_RULELIST_H
 
 #include <QAbstractTableModel>
 #include <QObject>
@@ -27,4 +27,4 @@ public:
 //    QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
 };
 
-#endif // GOFL_RULELIST_H
+#endif // GOLF_RULELIST_H

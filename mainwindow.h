@@ -3,8 +3,8 @@
 
 #include <QMainWindow>
 #include <QTimer>
-#include "gofl_board.h"
-#include "gofl_rulelist.h"
+#include "golf_board.h"
+#include "golf_rulelist.h"
 #include <QDateTime>
 
 namespace Ui {

@@ -56,6 +56,12 @@ MainWindow::MainWindow(QWidget *parent) :
                         &board,
                         SLOT(slot_GolfBoardInitial())
                         );
+    qDebug() << "connecting pushButton_clear() -> board.slot_GolfBoardClear(): ";
+    qDebug() << connect(ui->pushButton_setPattern,
+                        SIGNAL(clicked()),
+                        &board,
+                        SLOT(slot_GolfBoardSetPattern())
+                        );
 
 
     //PROBLEM Z PODLACZANIEM SYGNALU Z PARAMETREM
@@ -71,7 +77,12 @@ MainWindow::MainWindow(QWidget *parent) :
                         &board,
                         SLOT(slot_GolfBoardStateUpdate())
                         );
-
+    // qDebug() << "connecting : board.signal_GolfBoardSetPattern() -> board.slot_GolfBoardSetPattern():";
+    // qDebug() << connect(&board,
+    //                     SIGNAL(signal_GolfBoardSetPattern()),
+    //                     &board,
+    //                     SLOT(slot_GolfBoardSetPattern())
+    //                     );
 
 
 

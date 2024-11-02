@@ -1,13 +1,12 @@
-#include "gofl_rulelist.h"
+#include "golf_rulelist.h"
 #include <QTimer>
 
 gOfL_ruleList::gOfL_ruleList(QObject *parent)
     : QAbstractTableModel(parent)
-    ,  timer(new QTimer(this))
 {
-    timer->setInterval(1000);
-    connect(timer, &QTimer::timeout, this, &gOfL_ruleList::timerHit);
-    timer->start();
+    // timer->setInterval(1000);
+    // connect(timer, &QTimer::timeout, this, &gOfL_ruleList::timerHit);
+    // timer->start();
 }
 
 void gOfL_ruleList::timerHit()

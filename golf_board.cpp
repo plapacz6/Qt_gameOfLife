@@ -1,10 +1,10 @@
-#include "gofl_board.h"
+#include "golf_board.h"
 #include <QtDebug>
 #include <QBrush>
 #include <QTime>
 #include "T_Golf_engine.h"
 
-extern T_Goilf_engine Golf_engine;
+extern T_Golf_engine Golf_engine;
 
 T_GolfBoard::T_GolfBoard(QObject *parent)
     :
@@ -13,6 +13,7 @@ T_GolfBoard::T_GolfBoard(QObject *parent)
 {
     ptr_Golf_data = &(Golf_engine.data_new);
     Golf_engine.Torus = true;
+    pattern_name = QString("blinker");
 
     editable_state = true;
     InitData_chessboard();
@@ -106,6 +107,26 @@ void T_GolfBoard::InitData_chessboard()
     }
 }
 
+void T_GolfBoard::InitData_PatternName(QString p_name)
+{
+    qDebug() << "InitData_PatternName(" << p_name << ")";
+    Golf_engine.reset();
+    size_t r = 1;
+    size_t c = 1;
+    if(p_name == QString("blinker")) {
+        if(Golf_R >= 5 && Golf_C >= 5) {
+            (*ptr_Golf_data)[r + 1][c + 0] = true;
+            (*ptr_Golf_data)[r + 1][c + 1] = true;
+            (*ptr_Golf_data)[r + 1][c + 2] = true;
+            return;
+        }
+        else {
+            qDebug() << "board to small for pattern: " << p_name;
+        }
+    }
+    qDebug() << "unknown pattern name" << p_name;
+}
+
 void T_GolfBoard::slot_GolfBoardClear()
 {
     qDebug() << "slot_GolfBoardClear()";
@@ -119,6 +140,13 @@ void T_GolfBoard::slot_GolfBoardInitial()
     this->InitData_chessboard();
     //Golf_engine.swap_data();
     //this->InitData_chessboard();
+    emit this->signal_GolfBoardCalculated();
+}
+
+void T_GolfBoard::slot_GolfBoardSetPattern()
+{
+    qDebug() << "slot_GolfBoardSetPattern(" << this->pattern_name << ")";
+    InitData_PatternName(this->pattern_name);
     emit this->signal_GolfBoardCalculated();
 }
 
