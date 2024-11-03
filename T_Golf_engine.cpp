@@ -1,6 +1,7 @@
 #include "T_Golf_engine.h"
 #include <vector>
 #include <iostream>
+#include <cassert>
 using namespace std;
 
 T_Golf_engine::T_Golf_engine() {
@@ -35,14 +36,20 @@ int T_Golf_engine::check_neighbors(size_t r_, size_t c_) {
     bool border_encounted = false;
     for (int i = -1; i < 2; ++i) {
         for (int j = -1; j < 2; ++j) {
+
+            assert(i < Golf_R);
+            assert(-i > -Golf_R);
+            assert(j < Golf_C);
+            assert(-j > -Golf_C);
+
             border_encounted = false;
             if ((r + i) >= 0 && (r + i) < Golf_R) {
                 row = r + i;
             }
-            else {
+            else {                
                 if (this->Torus) {
                     if ((r + i) < 0) {
-                        row = r + Golf_R - i;
+                        row = r + Golf_R + i;
                     }
                     else {
                         row = r - Golf_R + i;
@@ -58,7 +65,7 @@ int T_Golf_engine::check_neighbors(size_t r_, size_t c_) {
             else {
                 if (this->Torus) {
                     if ((c + j) < 0) {
-                        col = c + Golf_C - j;
+                        col = c + Golf_C + j;
                     }
                     else {
                         col = c - Golf_C + j;
@@ -69,12 +76,14 @@ int T_Golf_engine::check_neighbors(size_t r_, size_t c_) {
                 }
             }
             if (!border_encounted) {
-                if (data_old[row, col]){
+                if (data_old[row][col]){
                     ++counter;
+                    // cout << "[" << counter << "]->";
                 }
             }//if
         }//for j
     }//for i
+    // cout << "neighbour counter: [" << counter << "]\n";
     return counter;
 }
 bool T_Golf_engine::check_rules(std::vector<int>& vr, int neighbors) {

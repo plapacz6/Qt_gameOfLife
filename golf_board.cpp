@@ -16,7 +16,8 @@ T_GolfBoard::T_GolfBoard(QObject *parent)
     pattern_name = QString("blinker");
 
     editable_state = true;
-    InitData_chessboard();
+    // InitData_chessboard();
+    InitData_PatternName(pattern_name);
 }
 
 int T_GolfBoard::rowCount(const QModelIndex &parent) const
