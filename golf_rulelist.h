@@ -1,14 +1,17 @@
-#ifndef GOFL_RULELIST_H
-#define GOFL_RULELIST_H
+#ifndef GOLF_RULELIST_H
+#define GOLF_RULELIST_H
 
 #include <QAbstractTableModel>
 #include <QObject>
 #include <QTimer>
+#include "T_Golf_engine.h"
+
+extern T_Golf_engine Golf_engine;
 
 class gOfL_ruleList : public QAbstractTableModel
 {
     Q_OBJECT
-    QTimer *timer;
+    
 public:
     gOfL_ruleList(QObject *parent = nullptr);
     void timerHit();
@@ -24,4 +27,4 @@ public:
 //    QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
 };
 
-#endif // GOFL_RULELIST_H
+#endif // GOLF_RULELIST_H

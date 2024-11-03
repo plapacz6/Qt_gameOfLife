@@ -83,7 +83,7 @@
      <rect>
       <x>290</x>
       <y>10</y>
-      <width>131</width>
+      <width>167</width>
       <height>251</height>
      </rect>
     </property>
@@ -99,6 +99,13 @@
       <widget class="QPushButton" name="pushButton_clear">
        <property name="text">
         <string>clear</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButton_setPattern">
+       <property name="text">
+        <string>set pattern</string>
        </property>
       </widget>
      </item>

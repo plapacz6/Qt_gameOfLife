@@ -1,15 +1,23 @@
-#include "gofl_board.h"
+#include "golf_board.h"
 #include <QtDebug>
 #include <QBrush>
 #include <QTime>
+#include "T_Golf_engine.h"
+
+extern T_Golf_engine Golf_engine;
 
 T_GolfBoard::T_GolfBoard(QObject *parent)
     :
     QAbstractTableModel(parent),
     dbg_out(QtDebugMsg)
 {
+    ptr_Golf_data = &(Golf_engine.data_new);
+    Golf_engine.Torus = true;
+    pattern_name = QString("blinker");
+
     editable_state = true;
-    InitData_chessboard();
+    // InitData_chessboard();
+    InitData_PatternName(pattern_name);
 }
 
 int T_GolfBoard::rowCount(const QModelIndex &parent) const
@@ -35,7 +43,7 @@ QVariant T_GolfBoard::data(const QModelIndex &index, int role) const
         // }
         // return QString("%1%2").arg(index.row() + 1).arg(index.column() + 1);
 
-        if(Golf_data[row][col]) {
+        if((*ptr_Golf_data)[row][col]) {
             return QString("T");
         }
         else {
@@ -44,7 +52,7 @@ QVariant T_GolfBoard::data(const QModelIndex &index, int role) const
     }
     if(role == Qt::BackgroundRole)
     {
-        if(Golf_data[row][col]) {
+        if((*ptr_Golf_data)[row][col]) {
             return QBrush(Qt::red);
         }
         else {
@@ -58,11 +66,11 @@ bool T_GolfBoard::setData(const QModelIndex &index, const QVariant &value, int r
 {
     // qDebug() << "T_GolfBoard::setData() : role:" << role;
     if(role == Qt::BackgroundRole) {
-        Golf_data[index.row()][index.column()] =
+        (*ptr_Golf_data)[index.row()][index.column()] =
             (value == QBrush(Qt::red)) ? true : false;
     }
     if(role == Qt::DisplayRole) {
-        Golf_data[index.row()][index.column()] =
+        (*ptr_Golf_data)[index.row()][index.column()] =
             (value == QString("T")) ? true : false;
     }
 }
@@ -90,27 +98,40 @@ void T_GolfBoard::InitData_chessboard()
         for(; col_data < Golf_COLS; ++col_data) {
             // out << "[" << (row_data % 2) << "," << ((col_data + 1) % 2) << "]";
             if((row_data % 2) ? (col_data % 2) : ((col_data + 1) % 2)){
-                Golf_data[row_data][col_data] = true;
+                (*ptr_Golf_data)[row_data][col_data] = true;
             }
             else {
-                Golf_data[row_data][col_data] = false;
+                (*ptr_Golf_data)[row_data][col_data] = false;
             }
         }
         // out << "\n";
     }
 }
 
+void T_GolfBoard::InitData_PatternName(QString p_name)
+{
+    qDebug() << "InitData_PatternName(" << p_name << ")";
+    Golf_engine.reset();
+    size_t r = 1;
+    size_t c = 1;
+    if(p_name == QString("blinker")) {
+        if(Golf_R >= 5 && Golf_C >= 5) {
+            (*ptr_Golf_data)[r + 1][c + 0] = true;
+            (*ptr_Golf_data)[r + 1][c + 1] = true;
+            (*ptr_Golf_data)[r + 1][c + 2] = true;
+            return;
+        }
+        else {
+            qDebug() << "board to small for pattern: " << p_name;
+        }
+    }
+    qDebug() << "unknown pattern name" << p_name;
+}
+
 void T_GolfBoard::slot_GolfBoardClear()
 {
     qDebug() << "slot_GolfBoardClear()";
-    // for(auto& x : Golf_data) {
-    //     x = false;
-    // }
-    bool* ptr_Golf_data = reinterpret_cast<bool*>(&Golf_data);
-    for(size_t i = 0; i < Golf_ROWS * Golf_COLS; ++i) {
-        *ptr_Golf_data = false;
-        ++ptr_Golf_data;
-    }
+    Golf_engine.reset();
     emit this->signal_GolfBoardCalculated(); //Golf_data);
 }
 
@@ -118,18 +139,27 @@ void T_GolfBoard::slot_GolfBoardInitial()
 {
     qDebug() << "slot_GolfBoardInitial()";
     this->InitData_chessboard();
+    //Golf_engine.swap_data();
+    //this->InitData_chessboard();
+    emit this->signal_GolfBoardCalculated();
+}
+
+void T_GolfBoard::slot_GolfBoardSetPattern()
+{
+    qDebug() << "slot_GolfBoardSetPattern(" << this->pattern_name << ")";
+    InitData_PatternName(this->pattern_name);
     emit this->signal_GolfBoardCalculated();
 }
 
 void T_GolfBoard::slot_GolfCalculate()
 {
     qDebug() << "slot_GolfCalculate() : invoked";
+    Golf_engine.calculate();
     emit this->signal_GolfBoardCalculated();
 }
 
 void T_GolfBoard::slot_GolfBoardStateUpdate()
 {
-
     QDebug out(QtDebugMsg);
     // qDebug() << "slot_GolfBoardStateUpdate() - called";
     out.nospace();
@@ -137,7 +167,7 @@ void T_GolfBoard::slot_GolfBoardStateUpdate()
 
     for(size_t row = 0; row < Golf_ROWS; ++row) {
         for(size_t col = 0; col < Golf_COLS; ++col) {
-            if(Golf_data[row][col] == true){
+            if((*ptr_Golf_data)[row][col] == true){
                 out << "#";
                 setData(index(row, col), QBrush(Qt::red), Qt::BackgroundRole);
                 setData(index(row, col), QString("T"), Qt::DisplayRole);
