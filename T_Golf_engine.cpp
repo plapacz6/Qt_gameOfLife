@@ -41,8 +41,12 @@ int T_Golf_engine::check_neighbors(size_t r_, size_t c_) {
             assert(-i > -Golf_R);
             assert(j < Golf_C);
             assert(-j > -Golf_C);
-
+            
+            if(i == 0 && j == 0) {  //don't count yourself
+                continue;
+            }
             border_encounted = false;
+            
             if ((r + i) >= 0 && (r + i) < Golf_R) {
                 row = r + i;
             }
