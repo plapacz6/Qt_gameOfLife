@@ -4,7 +4,7 @@
 #include <cstdlib>
 #include <vector>
 
-enum {Golf_R = 5, Golf_C = Golf_R, Golf_Size = Golf_R * Golf_C};
+enum {Golf_R = 30, Golf_C = Golf_R, Golf_Size = Golf_R * Golf_C};
 class T_Golf_engine {
 
 	bool data1[Golf_R][Golf_C];

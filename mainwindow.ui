@@ -83,7 +83,7 @@
      <rect>
       <x>290</x>
       <y>10</y>
-      <width>167</width>
+      <width>210</width>
       <height>251</height>
      </rect>
     </property>
@@ -105,7 +105,14 @@
      <item>
       <widget class="QPushButton" name="pushButton_setPattern">
        <property name="text">
-        <string>set pattern</string>
+        <string>set pattern  blinker</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButton_set_pattern_glider">
+       <property name="text">
+        <string>set pattern glider</string>
        </property>
       </widget>
      </item>

@@ -62,7 +62,12 @@ MainWindow::MainWindow(QWidget *parent) :
                         &board,
                         SLOT(slot_GolfBoardSetPattern())
                         );
-
+    qDebug() << "connecting pushButton_clear() -> board.slot_GolfBoardClear(): ";
+    qDebug() << connect(ui->pushButton_set_pattern_glider,
+                        SIGNAL(clicked()),
+                        &board,
+                        SLOT(slot_GolfBoardSetPattern_glider())
+                        );
 
     //PROBLEM Z PODLACZANIEM SYGNALU Z PARAMETREM
     // qDebug() << "connecting : board.signal_GolfBoardCalculated(board.Golf_data) -> board.signal_GolfBoardCalculated(board.Golf_data):";
@@ -86,7 +91,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
 
 
-    data_calculate_timer.setInterval(1000);
+    data_calculate_timer.setInterval(100);
     data_calculate_timer.setSingleShot(false);
     data_calculate_timer.start();
 }

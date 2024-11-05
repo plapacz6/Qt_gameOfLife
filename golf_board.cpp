@@ -120,6 +120,19 @@ void T_GolfBoard::InitData_PatternName(QString p_name)
             (*ptr_Golf_data)[r + 1][c + 1] = true;
             (*ptr_Golf_data)[r + 1][c + 2] = true;
             return;
+        }        
+        else {
+            qDebug() << "board to small for pattern: " << p_name;
+        }
+    }
+    if(p_name == QString("glider")) {
+        if(Golf_R >= 5 && Golf_C >= 5) {
+            (*ptr_Golf_data)[r - 1][c + 1] = true;
+            (*ptr_Golf_data)[r + 0][c + 2] = true;
+            (*ptr_Golf_data)[r + 1][c + 0] = true;
+            (*ptr_Golf_data)[r + 1][c + 1] = true;
+            (*ptr_Golf_data)[r + 1][c + 2] = true;
+            return;
         }
         else {
             qDebug() << "board to small for pattern: " << p_name;
@@ -182,6 +195,13 @@ void T_GolfBoard::slot_GolfBoardStateUpdate()
     }
 
     emit dataChanged( index(0,0), index(Golf_ROWS - 1, Golf_COLS - 1) );
+}
+
+void T_GolfBoard::slot_GolfBoardSetPattern_glider()
+{
+    pattern_name = QString("glider");
+    InitData_PatternName(this->pattern_name);
+    emit this->signal_GolfBoardCalculated();
 }
 /* to infrom view about data changing model send signal that indicates what
  * range of cells has changed

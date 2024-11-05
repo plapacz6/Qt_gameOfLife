@@ -43,6 +43,7 @@ public slots:
     void slot_GolfCalculate();
     // void slot_GolfBoardStateUpdate(std::array<bool, Golf_DATASIZE>& GolfData);
     void slot_GolfBoardStateUpdate();
+    void slot_GolfBoardSetPattern_glider();
 
 };
 

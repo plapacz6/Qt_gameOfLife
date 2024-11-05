@@ -82,12 +82,12 @@ int T_Golf_engine::check_neighbors(size_t r_, size_t c_) {
             if (!border_encounted) {
                 if (data_old[row][col]){
                     ++counter;
-                    // cout << "[" << counter << "]->";
+                    cout << "[" << counter << "]->";
                 }
             }//if
         }//for j
     }//for i
-    // cout << "neighbour counter: [" << counter << "]\n";
+    cout << "neighbour counter: [" << counter << "]\n";
     return counter;
 }
 bool T_Golf_engine::check_rules(std::vector<int>& vr, int neighbors) {
@@ -105,12 +105,24 @@ void T_Golf_engine::calculate(){
     for (size_t r = 0; r < Golf_R; ++r) {
         for (size_t c = 0; c < Golf_C; ++c) {
             Live_neighbors = check_neighbors(r, c);
-            if (check_rules(Rules_D, Live_neighbors) 
-                && check_rules(Rules_S, Live_neighbors)) {
-                data_new[r][c] = true;
+            /* Rules by: https://en.wikipedia.org/wiki/Conway%27s_Game_of_Li */
+            if(data_old[r][c]) {
+                //rules 1-3
+                if (check_rules(Rules_S, Live_neighbors)) {
+                    data_new[r][c] = true;
+                }
+                else {
+                    data_new[r][c] = false;
+                }
             }
             else {
-                data_new[r][c] = false;
+                //rule 4
+                if (check_rules(Rules_D, Live_neighbors)) {
+                    data_new[r][c] = true;
+                }
+                else {
+                    data_new[r][c] = false;
+                }
             }
         }
     }
