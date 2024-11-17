@@ -2,7 +2,7 @@
 #include <QApplication>
 #include "T_Golf_engine.h"
 
-T_Golf_engine Golf_engine;
+T_Golf_engine Golf_engine_global;
 
 int main(int argc, char *argv[])
 {

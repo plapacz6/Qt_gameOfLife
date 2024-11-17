@@ -82,12 +82,12 @@ int T_Golf_engine::check_neighbors(size_t r_, size_t c_) {
             if (!border_encounted) {
                 if (data_old[row][col]){
                     ++counter;
-                    cout << "[" << counter << "]->";
+                    // cout << "[" << counter << "]->";
                 }
             }//if
         }//for j
     }//for i
-    cout << "neighbour counter: [" << counter << "]\n";
+    // cout << "neighbour counter: [" << counter << "]\n";
     return counter;
 }
 bool T_Golf_engine::check_rules(std::vector<int>& vr, int neighbors) {
@@ -97,6 +97,26 @@ bool T_Golf_engine::check_rules(std::vector<int>& vr, int neighbors) {
         }
     }
     return false;
+}
+
+int T_Golf_engine::get_rows()
+{
+    return golf_engine_rows;
+}
+
+int T_Golf_engine::get_cols()
+{
+    return golf_engine_cols;
+}
+
+bool T_Golf_engine::get_cell(int r, int c)
+{
+    return data_new[r][c];
+}
+
+void T_Golf_engine::set_cell(int r, int c, bool v)
+{
+    data_new[r][c] = v;
 }
 void T_Golf_engine::calculate(){
     cout << "T_Golf_engine::calculate()" << endl;

@@ -25,14 +25,12 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     golf_board.cpp \
-    golf_rulelist.cpp \
         main.cpp \
         mainwindow.cpp \
     T_Golf_engine.cpp
 
 HEADERS += \
     golf_board.h \
-    golf_rulelist.h \
         mainwindow.h \
     T_Golf_engine.h
 
