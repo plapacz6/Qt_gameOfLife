@@ -3,9 +3,12 @@
 
 #include <QMainWindow>
 #include <QTimer>
-#include "golf_board.h"
-#include "golf_rulelist.h"
 #include <QDateTime>
+#include <QPushButton>
+#include "TQ_GolfBoardPreview.h"
+// #include "T_Golf_engine.h"
+
+enum {one_second = 1000};
 
 namespace Ui {
 class MainWindow;
@@ -14,20 +17,27 @@ class MainWindow;
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
-
+    T_Golf_engine& Golf_engine;
 public:
+    int period;
     QTimer data_calculate_timer;
-    T_GolfBoard board;
-    gOfL_ruleList rule_list;
+    T_GolfBoardPreview board;
+    // gOfL_ruleList rule_list;
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
 
 public slots:
-
+    void slot_button_edit();
+    void slot_button_timer();
+    void slot_data_calculate_timer_pause();
+    void slot_data_calculate_timer_run();
+    void slot_set_period(int);
+    void slot_set_torus(int);
 public:
 signals:
-
+    void signal_data_calculate_timer_pause();
+    void signal_data_calculate_timer_run();
 private:
     Ui::MainWindow *ui;
 };
