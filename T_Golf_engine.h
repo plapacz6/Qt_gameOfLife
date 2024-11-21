@@ -4,7 +4,7 @@
 #include <cstdlib>
 #include <vector>
 
-enum {Golf_R = 75, Golf_C = Golf_R, Golf_Size = Golf_R * Golf_C};
+enum : size_t {Golf_R = 50, Golf_C = Golf_R, Golf_Size = Golf_R * Golf_C};
 class T_Golf_engine {
     int golf_engine_rows = Golf_R;
     int golf_engine_cols = Golf_C;
@@ -29,6 +29,8 @@ public:
 	void reset();
 	void calculate();
 	void swap_data();
+protected:
+    int check_neighbors_int(size_t r_, size_t c_);
 };
 
 #endif // T_GOLF_ENGINE_H

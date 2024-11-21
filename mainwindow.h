@@ -3,10 +3,10 @@
 
 #include <QMainWindow>
 #include <QTimer>
-#include "golf_board.h"
 #include <QDateTime>
 #include <QPushButton>
-#include "T_Golf_engine.h"
+#include "TQ_GolfBoardPreview.h"
+// #include "T_Golf_engine.h"
 
 enum {one_second = 1000};
 
@@ -21,7 +21,7 @@ class MainWindow : public QMainWindow
 public:
     int period;
     QTimer data_calculate_timer;
-    T_GolfBoard board;
+    T_GolfBoardPreview board;
     // gOfL_ruleList rule_list;
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();

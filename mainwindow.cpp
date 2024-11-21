@@ -55,6 +55,8 @@ MainWindow::MainWindow(QWidget *parent) :
     QStatusBar *statusBar;
     */
 
+
+    //setting width of buttons sections
     int buttonWidth = 150;
     ui->pushButton_clear->setMinimumWidth(buttonWidth);
     ui->pushButton_EditSwitch->setMinimumWidth(buttonWidth);
@@ -74,6 +76,9 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->listView_patterns->setMinimumWidth(buttonWidth);
     ui->listView_patterns->setMinimumHeight(0);
 
+
+    //!!!!!!!!!!!!!!!!!!!!!   setting tableView size and place and main window size
+
    //  ui->tableView->rowHeight(boxSize);
    //  ui->tableView->columnWidth(boxSize);
 
@@ -81,10 +86,10 @@ MainWindow::MainWindow(QWidget *parent) :
    //  // ui->tableView->frameGeometry();
    //  // ui->tableView->rowViewportPosition(30/2);
 
-    // ui->tableView->setMinimumHeight((board.rowCount() + 1) * boxSize);
-    ui->tableView->setMaximumHeight((board.rowCount() + 1) * boxSize);
-    // ui->tableView->setMinimumWidth((board.columnCount() + 1) * boxSize);
-    ui->tableView->setMaximumWidth((board.columnCount() + 1)* boxSize);
+    ui->tableView->setMinimumHeight((board.rowCount()) * boxSize);
+    ui->tableView->setMaximumHeight((board.rowCount()) * boxSize);
+    ui->tableView->setMinimumWidth((board.columnCount()) * boxSize);
+    ui->tableView->setMaximumWidth((board.columnCount())* boxSize);
 
    //  // ui->tableView->resizeColumnToContents(board.columnCount());
    //  // ui->tableView->resizeRowToContents(board.rowCount());
@@ -97,27 +102,36 @@ MainWindow::MainWindow(QWidget *parent) :
    // ui->tableView->setFixedWidth(boxSize * board.columnCount());
 
 
-    board.slot_GolfBoardSetPreviewStartRow(25);
-    board.slot_GolfBoardSetPreviewStartCol(25);
 
 
-    // ui->centralWidget->  removeWidget(ui->lineEdit_board_size);
-    // ui->layoutH_main->removeWidget(ui->lineEdit_x_info);
-    // ui->layoutH_main->removeWidget(ui->lineEdit_y_info);
+    //setting preview region on center of Golf_engine board
+    board.slot_GolfBoardSetPreviewStartRow(
+        (Golf_R > Golf_ROWS)
+        ? (Golf_R - Golf_ROWS) / 2
+        :   0
+    );
+    board.slot_GolfBoardSetPreviewStartCol(
+        (Golf_C > Golf_COLS)
+        ? (Golf_C - Golf_COLS) / 2
+        :   0
+    );
 
+
+    //setting status bar
     ui->lineEdit_board_size->setParent(nullptr);
     ui->lineEdit_x_info->setParent(nullptr);
     ui->lineEdit_y_info->setParent(nullptr);
 
     ui->lineEdit_board_size->setText(QString("board: %1 x %2").arg(Golf_engine.get_rows()).arg(Golf_engine.get_cols()));
-    ui->lineEdit_x_info->setText(QString("view start c: %1").arg(Golf_engine.get_cols()));
-    ui->lineEdit_y_info->setText(QString("view start r: %1").arg(Golf_engine.get_rows()));
+    ui->lineEdit_x_info->setText(QString("view start c: %1").arg(board.starting_col_of_view));
+    ui->lineEdit_y_info->setText(QString("view start r: %1").arg(board.starting_row_of_view));
 
     ui->statusBar->addWidget(ui->lineEdit_board_size);
     ui->statusBar->addWidget(ui->lineEdit_y_info);
     ui->statusBar->addWidget(ui->lineEdit_x_info);
 
 
+    //setting period control (animation's speed)
     period = 100; //ui->spinBox->value();
     ui->spinBox_period->setMaximum(one_second);
     ui->spinBox_period->setMinimum(1);
@@ -126,27 +140,19 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->horizontalScrollBar_period->setMinimum(1);
     ui->horizontalScrollBar_period->setValue(period);
 
+
     ui->tableView->show();
-
-
-
-
 
     // qDebug() << QString("box_size: %1, table->height(): %2, board.rowCount(): %3")
     //             .arg(box_size)
     //             .arg(ui->tableView->height())
     //             .arg(board.rowCount());
 
-    // QTableView listRule;
-    // listRule.setModel(&rule_list);
-    // listRule.rowHeight(30);
-    // listRule.columnWidth(50);
-    // listRule.show();
-
     qDebug() << QDateTime::currentDateTime().toString("yyyy.MM.dd hh:mm:ss");
 
 
 
+    //conneting slots
     qDebug() << "connecting pushButton_clear() -> board.slot_GolfBoardClear(): ";
     qDebug() << connect(ui->pushButton_clear,
                         SIGNAL(clicked()),
@@ -241,6 +247,7 @@ MainWindow::MainWindow(QWidget *parent) :
                         SLOT(slot_set_torus(int))
                         );
 
+
     data_calculate_timer.setInterval(period);
     data_calculate_timer.setSingleShot(false);    
 }
@@ -284,7 +291,7 @@ void MainWindow::slot_data_calculate_timer_run()
 
 void MainWindow::slot_set_period(int v)
 {
-    period = v; //ui->spinBox->value();
+    period = v;
     qDebug() << "periond: " << period;
     ui->spinBox_period->setValue(period);   //this may emit signal, but only if current data differs
     ui->horizontalScrollBar_period->setValue(period);  //this may emit signal, but only if current data differs
