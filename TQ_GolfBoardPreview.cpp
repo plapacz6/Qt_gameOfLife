@@ -48,17 +48,26 @@ QVariant T_GolfBoardPreview::data(const QModelIndex &index, int role) const
     int row = starting_row_of_view + index.row();
     int col = starting_col_of_view + index.column();
 
-    // qDebug() << "gOfL_board::data()" << QString("row %1, col %2, role %3").arg(row).arg(col).arg(role);
+    // qDebug() << __PRETTY_FUNCTION__  << QString("row %1, col %2, role %3").arg(row).arg(col).arg(role);
 
-    if(role == Qt::DisplayRole)
+    if(role == Qt::UserRole)
     {
         if(Golf_engine.get_cell(row, col)) {
-            return QString("_");
+            return QVariant(true);
         }
         else {
-            return QString(" ");
+            return QVariant(false);
         }
     }
+    // if(role == Qt::DisplayRole)
+    // {
+    //     if(Golf_engine.get_cell(row, col)) {
+    //         return QString("_");
+    //     }
+    //     else {
+    //         return QString(" ");
+    //     }
+    // }
     if(role == Qt::BackgroundRole)
     {
         if(Golf_engine.get_cell(row, col)) {
@@ -74,17 +83,13 @@ QVariant T_GolfBoardPreview::data(const QModelIndex &index, int role) const
 
 bool T_GolfBoardPreview::setData(const QModelIndex &index, const QVariant &value, int role)
 {
-    // qDebug() << "T_GolfBoard::setData() : role:    WHY THIS IS" << role;
+    // qDebug() << __PRETTY_FUNCTION__ << "role:" << role;
     int row = starting_row_of_view + index.row();
     int col = starting_col_of_view + index.column();
     if(
-        //true
-        // index. Qt::ImCurrentSelection
-        //role == Qt::ImCurrentSelection
-        role == Qt::CheckStateRole
-        || role == Qt::EditRole
-        ) {
-        Golf_engine.set_cell(row + starting_row_of_view, col + starting_col_of_view, value.toBool()); //(Golf_engine.get_cell(row, col) ? false : true));
+        role == Qt::UserRole
+    ) {
+        Golf_engine.set_cell(row, col, value.toBool());
         return true;
     }
     return false;
@@ -103,7 +108,7 @@ Qt::ItemFlags T_GolfBoardPreview::flags(const QModelIndex &index) const
 // ----------------------- helper methods ----------------------------------
 void T_GolfBoardPreview::InitData_chessboard()
 {
-    qDebug() << "InitData_chessboard() - member call";
+    qDebug() << __PRETTY_FUNCTION__;
     QDebug out(QtDebugMsg);
     out.nospace();
 
@@ -173,8 +178,6 @@ void T_GolfBoardPreview::slot_GolfBoardInitial()
 {
     qDebug() << "slot_GolfBoardInitial()";
     this->InitData_chessboard();
-    //Golf_engine.swap_data();
-    //this->InitData_chessboard();
     emit this->signal_GolfBoardCalculated();
 }
 
@@ -192,33 +195,14 @@ void T_GolfBoardPreview::slot_GolfBoardSetPatternNearPreviewCenter(QString &)
 
 void T_GolfBoardPreview::slot_GolfCalculate()
 {
-    qDebug() << "slot_GolfCalculate() : invoked";
+    qDebug() << __PRETTY_FUNCTION__;
     Golf_engine.calculate();
     emit this->signal_GolfBoardCalculated();
 }
 
 void T_GolfBoardPreview::slot_GolfBoardStateUpdate()
 {
-    QDebug out(QtDebugMsg);
-    // qDebug() << "slot_GolfBoardStateUpdate() - called";
-    out.nospace();
-    out << "slot_GolfBoardStateUpdate():\n";
-
-    for(size_t row = 0; row < Golf_ROWS; ++row) {
-        for(size_t col = 0; col < Golf_COLS; ++col) {
-            if(Golf_engine.get_cell(row, col) == true){
-                // out << "#";
-                setData(index(row, col), QBrush(Qt::red), Qt::BackgroundRole);
-                setData(index(row, col), QString("T"), Qt::DisplayRole);
-            }
-            else {
-                // out << "_";
-                setData(index(row, col), QBrush(Qt::gray), Qt::BackgroundRole);
-                setData(index(row, col), QString("F"), Qt::DisplayRole);
-            }            
-        }
-        // out << "\n";
-    }
+    qDebug() << __PRETTY_FUNCTION__;
 
     emit dataChanged( index(0,0), index(Golf_ROWS - 1, Golf_COLS - 1) );
 }
@@ -245,7 +229,7 @@ void T_GolfBoardPreview::slot_GolfBoardSwitchEditor()
 
 void T_GolfBoardPreview::slot_GolfBoardSetPreviewStartRow(int y)
 {
-    qDebug() << "slot_GolfBoardSetPreviewStartRow(int: " << y << ")";
+    qDebug() << __PRETTY_FUNCTION__ << "(int: " << y << ")";
     assert(y >= 0);
     assert(y + (board_preview_hight - 1) < Golf_engine.get_rows());  //index + size -> first index after last allowed
 
@@ -259,7 +243,7 @@ void T_GolfBoardPreview::slot_GolfBoardSetPreviewStartRow(int y)
 
 void T_GolfBoardPreview::slot_GolfBoardSetPreviewStartCol(int x)
 {
-    qDebug() << "slot_GolfBoardSetPreviewStartCol(int: " << x << ")";
+    qDebug() << __PRETTY_FUNCTION__ << "(int: " << x << ")";
     assert(x >= 0);
     assert(x + (board_preview_width - 1) < Golf_engine.get_cols());
 

@@ -18,7 +18,6 @@ MainWindow::MainWindow(QWidget *parent) :
     int windowHight = 600;
     double boxSize = windowHight / board.rowCount();
 
-    // parent->setMaximumHeight()
     ui->centralWidget->setMinimumWidth(windowWidth);
     ui->centralWidget->setMinimumHeight((windowHight));
 
@@ -78,30 +77,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
 
     //!!!!!!!!!!!!!!!!!!!!!   setting tableView size and place and main window size
-
-   //  ui->tableView->rowHeight(boxSize);
-   //  ui->tableView->columnWidth(boxSize);
-
-   //  // ui->tableView->setGeometry();
-   //  // ui->tableView->frameGeometry();
-   //  // ui->tableView->rowViewportPosition(30/2);
-
     ui->tableView->setMinimumHeight((board.rowCount() ) * boxSize);
     ui->tableView->setMaximumHeight((board.rowCount() ) * boxSize);
     ui->tableView->setMinimumWidth((board.columnCount() ) * boxSize);
     ui->tableView->setMaximumWidth((board.columnCount() )* boxSize);
-
-   //  // ui->tableView->resizeColumnToContents(board.columnCount());
-   //  // ui->tableView->resizeRowToContents(board.rowCount());
-   //  // ui->tableView->resize(board.rowCount() * 10, board.columnCount() * 10);
-
-   //  // ui->tableView->rowHeight(box_size);
-   //  // ui->tableView->columnWidth(box_size);
-
-   // ui->tableView->setFixedHeight(boxSize * board.rowCount()); //dotyczy calej tabeli
-   // ui->tableView->setFixedWidth(boxSize * board.columnCount());
-
-
 
 
     //setting preview region on center of Golf_engine board
@@ -185,8 +164,8 @@ MainWindow::MainWindow(QWidget *parent) :
                         SLOT(slot_GolfBoardSetPattern_glider())
                         );
 
-
     // qDebug() << "connecting pushButton_EditSwitch() -> board.slot_GolfBoardSwitchEditor(): ";
+    /* actions sequence is crutial in switching edit mode, so this slot is called directly by slot for edit button */
     // qDebug() << connect(ui->pushButton_EditSwitch,
     //                     SIGNAL(clicked()),
     //                     &board,
@@ -273,19 +252,25 @@ void MainWindow::slot_button_edit()
         qDebug() << "isml.size(): " << isml.size();
         for(const QModelIndex& idx: isml) {
             qDebug() << "idx: " << idx;
-            int row = idx.row() + board.starting_row_of_view;
-            int col = idx.column() + board.starting_col_of_view;
-            // board.setData(idx, true, Qt::CheckStateRole);
-            if(Golf_engine.get_cell(row, col)) {
-                Golf_engine.set_cell(row, col, false);
+            if(board.data(idx, Qt::UserRole).toBool() == false) {
+                board.setData(idx, true, Qt::UserRole);
             }
             else {
-                Golf_engine.set_cell(row, col, true);
+                board.setData(idx, false, Qt::UserRole);
             }
+            // int row = idx.row() + board.starting_row_of_view;
+            // int col = idx.column() + board.starting_col_of_view;
+            // if(Golf_engine.get_cell(row, col)) {
+            //     Golf_engine.set_cell(row, col, false);
+            // }
+            // else {
+            //     Golf_engine.set_cell(row, col, true);
+            // }
         }
         sm->clearSelection();
         ui->pushButton_EditSwitch->setText(QString("edit pattern"));
-        emit board.dataChanged( board.index(0,0), board.index(Golf_ROWS - 1, Golf_COLS - 1) );
+        //not needed: this emit is made elsewere //emit board.dataChanged( board.index(0,0), board.index(Golf_ROWS - 1, Golf_COLS - 1) );
+
         board.slot_GolfBoardSwitchEditor();
     }
     else {
@@ -319,7 +304,7 @@ void MainWindow::slot_data_calculate_timer_run()
 void MainWindow::slot_set_period(int v)
 {
     period = v;
-    qDebug() << "periond: " << period;
+    qDebug() << "period: " << period;
     ui->spinBox_period->setValue(period);   //this may emit signal, but only if current data differs
     ui->horizontalScrollBar_period->setValue(period);  //this may emit signal, but only if current data differs
     data_calculate_timer.stop();
