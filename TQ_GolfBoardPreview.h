@@ -36,7 +36,7 @@ public:
     QBrush cell_color_empty = QBrush(Qt::gray);
     QBrush cell_color_full = QBrush(Qt::darkBlue);
 
-    T_GolfBoardPreview(QObject *parent = nullptr);
+    explicit T_GolfBoardPreview(QObject *parent = nullptr);
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     int columnCount(const QModelIndex &parent = QModelIndex()) const override;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;

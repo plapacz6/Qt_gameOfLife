@@ -22,15 +22,23 @@ DEFINES += QT_DEPRECATED_WARNINGS
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
+INCLUDEPATH += /usr/local/include/gtest
+LIBS += -lgtest -lgtest_main -lpthread
 
 SOURCES += \
     TQ_GolfBoardPreview.cpp \
+    T_GolfIndex.cpp \
+    T_GolfPatternDescription.cpp \
         main.cpp \
         mainwindow.cpp \
-    T_Golf_engine.cpp
+    T_Golf_engine.cpp \
+    tests/test_T_GolfIndex.cpp \
+    tests/test_T_GolfPatternDescription.cpp
 
 HEADERS += \
     TQ_GolfBoardPreview.h \
+    T_GolfIndex.h \
+    T_GolfPatternDescription.h \
         mainwindow.h \
     T_Golf_engine.h
 

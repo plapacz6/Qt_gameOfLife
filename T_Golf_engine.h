@@ -25,7 +25,7 @@ public:
 
     bool(*data_new)[Golf_R];
 	
-	T_Golf_engine();
+    explicit T_Golf_engine();
 	void reset();
 	void calculate();
 	void swap_data();
