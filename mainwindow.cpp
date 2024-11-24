@@ -16,7 +16,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->tableView->setModel(&board);
     int windowWidth = 800;
     int windowHight = 600;
-    double boxSize = windowHight / board.columnCount();
+    double boxSize = windowHight / board.rowCount();
 
     // parent->setMaximumHeight()
     ui->centralWidget->setMinimumWidth(windowWidth);
@@ -86,10 +86,10 @@ MainWindow::MainWindow(QWidget *parent) :
    //  // ui->tableView->frameGeometry();
    //  // ui->tableView->rowViewportPosition(30/2);
 
-    ui->tableView->setMinimumHeight((board.rowCount()) * boxSize);
-    ui->tableView->setMaximumHeight((board.rowCount()) * boxSize);
-    ui->tableView->setMinimumWidth((board.columnCount()) * boxSize);
-    ui->tableView->setMaximumWidth((board.columnCount())* boxSize);
+    ui->tableView->setMinimumHeight((board.rowCount() ) * boxSize);
+    ui->tableView->setMaximumHeight((board.rowCount() ) * boxSize);
+    ui->tableView->setMinimumWidth((board.columnCount() ) * boxSize);
+    ui->tableView->setMaximumWidth((board.columnCount() )* boxSize);
 
    //  // ui->tableView->resizeColumnToContents(board.columnCount());
    //  // ui->tableView->resizeRowToContents(board.rowCount());
@@ -116,6 +116,12 @@ MainWindow::MainWindow(QWidget *parent) :
         :   0
     );
 
+    //experimental scalling
+    //off                      not work as expected (not equal size of cells)
+    // ui->tableView->horizontalHeader()->stretchLastSection();
+    // ui->tableView->resizeColumnsToContents();
+    // ui->tableView->verticalHeader()->stretchLastSection();
+    // ui->tableView->resizeRowsToContents();
 
     //setting status bar
     ui->lineEdit_board_size->setParent(nullptr);
@@ -180,17 +186,17 @@ MainWindow::MainWindow(QWidget *parent) :
                         );
 
 
-    qDebug() << "connecting pushButton_EditSwitch() -> board.slot_GolfBoardSwitchEditor(): ";
-    qDebug() << connect(ui->pushButton_EditSwitch,
-                        SIGNAL(clicked()),
-                        &board,
-                        SLOT(slot_GolfBoardSwitchEditor())
-                        );
+    // qDebug() << "connecting pushButton_EditSwitch() -> board.slot_GolfBoardSwitchEditor(): ";
+    // qDebug() << connect(ui->pushButton_EditSwitch,
+    //                     SIGNAL(clicked()),
+    //                     &board,
+    //                     SLOT(slot_GolfBoardSwitchEditor())
+    //                     );
     qDebug() << "connecting pushButton_EditSwitch() -> this.pushButton_EditSwitch(): ";
     qDebug() << connect(ui->pushButton_EditSwitch,
                         SIGNAL(clicked()),
                         this,
-                        SLOT(slot_change_button_name(ui->pushButton_EditSwitch))
+                        SLOT(slot_button_edit())
                         );
 
 
@@ -259,11 +265,32 @@ MainWindow::~MainWindow()
 
 void MainWindow::slot_button_edit()
 {
-    if(ui->pushButton_EditSwitch->text() == QString("edition enable")) {
-        ui->pushButton_EditSwitch->setText(QString("edition disable"));
+    qDebug() << __PRETTY_FUNCTION__;
+
+    if(ui->pushButton_EditSwitch->text() == QString("accept pattern")) {
+        QItemSelectionModel *sm = ui->tableView->selectionModel();
+        QModelIndexList isml = sm->selectedIndexes();
+        qDebug() << "isml.size(): " << isml.size();
+        for(const QModelIndex& idx: isml) {
+            qDebug() << "idx: " << idx;
+            int row = idx.row() + board.starting_row_of_view;
+            int col = idx.column() + board.starting_col_of_view;
+            // board.setData(idx, true, Qt::CheckStateRole);
+            if(Golf_engine.get_cell(row, col)) {
+                Golf_engine.set_cell(row, col, false);
+            }
+            else {
+                Golf_engine.set_cell(row, col, true);
+            }
+        }
+        sm->clearSelection();
+        ui->pushButton_EditSwitch->setText(QString("edit pattern"));
+        emit board.dataChanged( board.index(0,0), board.index(Golf_ROWS - 1, Golf_COLS - 1) );
+        board.slot_GolfBoardSwitchEditor();
     }
     else {
-        ui->pushButton_EditSwitch->setText(QString("edition enable"));
+        ui->pushButton_EditSwitch->setText(QString("accept pattern"));
+        board.slot_GolfBoardSwitchEditor();
     }
 }
 

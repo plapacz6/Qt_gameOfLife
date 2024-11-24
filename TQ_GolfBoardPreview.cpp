@@ -77,15 +77,23 @@ bool T_GolfBoardPreview::setData(const QModelIndex &index, const QVariant &value
     // qDebug() << "T_GolfBoard::setData() : role:    WHY THIS IS" << role;
     int row = starting_row_of_view + index.row();
     int col = starting_col_of_view + index.column();
-    if(role == Qt::EditRole || role == Qt::CheckStateRole) {
-        Golf_engine.set_cell(row, col, value.toBool()); //(Golf_engine.get_cell(row, col) ? false : true));
+    if(
+        //true
+        // index. Qt::ImCurrentSelection
+        //role == Qt::ImCurrentSelection
+        role == Qt::CheckStateRole
+        || role == Qt::EditRole
+        ) {
+        Golf_engine.set_cell(row + starting_row_of_view, col + starting_col_of_view, value.toBool()); //(Golf_engine.get_cell(row, col) ? false : true));
+        return true;
     }
+    return false;
 }
 
 Qt::ItemFlags T_GolfBoardPreview::flags(const QModelIndex &index) const
 {
     if(editable_state) {
-        return Qt::ItemIsEnabled | Qt::ItemIsSelectable;
+        return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
     }
     else {
         return Qt::NoItemFlags;
@@ -231,6 +239,7 @@ void T_GolfBoardPreview::slot_GolfBoardSetPattern_glider()
 
 void T_GolfBoardPreview::slot_GolfBoardSwitchEditor()
 {
+    qDebug() << __PRETTY_FUNCTION__;
     editable_state = editable_state ? false : true;
 }
 
