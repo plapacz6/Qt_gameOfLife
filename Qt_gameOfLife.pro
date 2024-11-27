@@ -29,16 +29,19 @@ SOURCES += \
     TQ_GolfBoardPreview.cpp \
     T_GolfIndex.cpp \
     T_GolfPatternDescription.cpp \
+    T_GolfPatternStorehouse.cpp \
         main.cpp \
         mainwindow.cpp \
     T_Golf_engine.cpp \
     tests/test_T_GolfIndex.cpp \
-    tests/test_T_GolfPatternDescription.cpp
+    tests/test_T_GolfPatternDescription.cpp \
+    tests/test_T_GolfPatternStoreHouse.cpp
 
 HEADERS += \
     TQ_GolfBoardPreview.h \
     T_GolfIndex.h \
     T_GolfPatternDescription.h \
+    T_GolfPatternStorehouse.h \
         mainwindow.h \
     T_Golf_engine.h
 
