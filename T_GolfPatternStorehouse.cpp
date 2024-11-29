@@ -1,6 +1,8 @@
 #include "T_GolfPatternStorehouse.h"
 #include <algorithm>
 #include <cassert>
+#include <iostream>
+
 using namespace  std;
 
 T_GolfPatternStorehouse::T_GolfPatternStorehouse() {
@@ -18,7 +20,8 @@ void T_GolfPatternStorehouse::addPattern(std::string name_, std::initializer_lis
     for(const T_GolfIndex& idx: idxes) {
         pt.addPoint(idx.col, idx.row);
     }
-    patterns.emplace_back(std::move(pt));
+    // patterns.emplace_back(std::move(pt));
+    patterns.push_back(pt);
 }
 
 void T_GolfPatternStorehouse::addPattern(std::string name_, std::initializer_list<size_t> xy)

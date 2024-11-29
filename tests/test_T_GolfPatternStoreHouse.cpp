@@ -22,7 +22,7 @@ TEST(T_GolfPatternStoreHouse, empty)
     // ASSERT_THAT(0, Eq(0));
 }
 
-TEST(T_GolfPatternStoreHouse, add_1_or_2) {
+TEST(T_GolfPatternStoreHouse, add_pattern_object_1_or_2) {
     T_GolfPatternStorehouse sh1;
     EXPECT_EQ(sh1.patterns.size(), 0);
     EXPECT_EQ(sh1.getPattern(0), nullptr);
@@ -111,20 +111,29 @@ TEST(T_GolfPatternStoreHouse, getPattern) {
     EXPECT_EQ(sh1.getPattern("pattern3a")->getName(), "pattern3a");
 }
 
-// TEST(T_GolfPatternStoreHouse, add_all) {
-//     T_GolfPatternStorehouse sh1;
-//     EXPECT_EQ(sh1.patterns.size(), 0);
-//     EXPECT_EQ(sh1.getPattern(0), nullptr);
+TEST(T_GolfPatternStoreHouse, add_pattern_name_and_index) {
+    T_GolfPatternStorehouse sh1;
+    EXPECT_EQ(sh1.patterns.size(), 0);
+    EXPECT_EQ(sh1.getPattern(0), nullptr);
 
-//     T_GolfPatternDescription pt1("pattern1");
-//     T_GolfPatternDescription pt2("pattern2");
-//     sh1.addPattern(pt1);
-//     sh1.addPattern(pt2);
-//     sh1.addPattern("patten3", { T_GolfIndex{1,2}, T_GolfIndex{3, 4}});
-//     EXPECT_EQ(sh1.getPattern("pattern3")->begin()->col, 1 );
-//     EXPECT_EQ((sh1.getPattern("pattern3")->begin() + 1)->row, 4 );
+    sh1.addPattern("pattern3", { T_GolfIndex{1,2}, T_GolfIndex{3, 4}});
+    EXPECT_EQ(sh1.getPattern("pattern4"), nullptr);
+    EXPECT_NE(sh1.getPattern("pattern3"), nullptr);
+    EXPECT_EQ(sh1.getPattern("pattern3")->getName(), "pattern3");
+    EXPECT_EQ(sh1.getPattern("pattern3")->begin()->col, 1 );
+    EXPECT_EQ((sh1.getPattern("pattern3")->begin() + 1)->row, 4 );
 
-//     sh1.addPattern("patten4", {5, 6, 7, 8 });
-//     EXPECT_EQ(sh1.getPattern("pattern4")->begin()->col, 5 );
-//     EXPECT_EQ((sh1.getPattern("pattern4")->begin() + 1)->row, 8 );
-// }
+}
+
+TEST(T_GolfPatternStoreHouse, add_pattern_name_rows_cols) {
+    T_GolfPatternStorehouse sh1;
+    EXPECT_EQ(sh1.patterns.size(), 0);
+    EXPECT_EQ(sh1.getPattern(0), nullptr);
+
+    sh1.addPattern("pattern4", {5, 6, 7, 8 });
+    EXPECT_EQ(sh1.getPattern("pattern3"), nullptr);
+    EXPECT_EQ(sh1.getPattern("pattern4")->getName(), "pattern4");
+    EXPECT_EQ(sh1.getPattern("pattern4")->begin()->col, 5 );
+    EXPECT_EQ((sh1.getPattern("pattern4")->begin() + 1)->row, 8 );
+}
+
