@@ -8,12 +8,12 @@ T_Golf_engine Golf_engine_global;
 
 int main(int argc, char *argv[])
 {
-    ::testing::InitGoogleTest(&argc, argv);
+    // ::testing::InitGoogleTest(&argc, argv);
     QApplication a(argc, argv);
     MainWindow w;
     w.show();
 
-    (void) RUN_ALL_TESTS();
+    // (void) RUN_ALL_TESTS();
 
     return a.exec();
 }

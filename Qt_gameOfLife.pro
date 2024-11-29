@@ -30,6 +30,7 @@ SOURCES += \
     T_GolfIndex.cpp \
     T_GolfPatternDescription.cpp \
     T_GolfPatternStorehouse.cpp \
+    T_TopLeftBottomRight_RectTableArea.cpp \
         main.cpp \
         mainwindow.cpp \
     T_Golf_engine.cpp \
@@ -42,6 +43,7 @@ HEADERS += \
     T_GolfIndex.h \
     T_GolfPatternDescription.h \
     T_GolfPatternStorehouse.h \
+    T_TopLeftBottomRight_RectTableArea.h \
         mainwindow.h \
     T_Golf_engine.h
 

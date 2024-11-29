@@ -8,6 +8,7 @@
 #include <QString>
 #include <QBrush>
 #include "T_Golf_engine.h"
+#include "T_TopLeftBottomRight_RectTableArea.h"
 
 enum : size_t {
     Golf_ROWS_ = 50,
@@ -47,6 +48,13 @@ public:
 
     void InitData_chessboard();
     void InitData_PatternName(QString p_name);
+
+    /**
+     * @brief getMinRectContainingPattern
+     * @return pair of QModelIndex (top left, bottom right) of the smallest rectangle containing the pattern
+     * (not empty cells in board preview)
+     */
+    T_TopLeftBottomRight_RectTableArea getMinRectContainingPattern();
 
 public:
 signals:    

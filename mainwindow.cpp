@@ -1,6 +1,8 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include <QtDebug>
+#include "T_TopLeftBottomRight_RectTableArea.h"
+
 // #include <QDateTime>
 
 
@@ -272,6 +274,25 @@ void MainWindow::slot_button_edit()
         //not needed: this emit is made elsewere //emit board.dataChanged( board.index(0,0), board.index(Golf_ROWS - 1, Golf_COLS - 1) );
 
         board.slot_GolfBoardSwitchEditor();
+
+        /* printout pattern description */
+        QDebug out(QtDebugMsg);
+        out.nospace();
+        T_TopLeftBottomRight_RectTableArea tlbr = board.getMinRectContainingPattern();
+        out << "pattern description:\n";
+        out << "'" << board.pattern_name << "'\n";
+        for(int i = tlbr.top_left.row(); i < tlbr.bottom_right.row() + 1; ++i) {
+            for(int j = tlbr.top_left.column(); j < tlbr.bottom_right.column() + 1; ++j){
+                out << "[";
+                // out << ((board.data(board.index(i, j)).toBool()) ? QString("1") : QString("0"));
+                out << (Golf_engine.get_cell(i + board.starting_row_of_view, j + board.starting_col_of_view) ? QString("1") : QString("0"));
+                out << "]";
+            }
+            out << "\n";
+        }
+        out << "\n";
+        /* ------------------------ */
+
     }
     else {
         ui->pushButton_EditSwitch->setText(QString("accept pattern"));

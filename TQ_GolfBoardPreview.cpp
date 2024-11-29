@@ -4,6 +4,10 @@
 #include <QTime>
 #include "T_Golf_engine.h"
 #include <cassert>
+#include <vector>
+#include <QList>
+
+using namespace std;
 
 extern T_Golf_engine Golf_engine_global;
 
@@ -134,19 +138,21 @@ void T_GolfBoardPreview::InitData_PatternName(QString p_name)
     Golf_engine.reset();    
     size_t r = starting_row_of_view + 1;
     size_t c = starting_col_of_view + 1;
+    bool pattern_seted = false;
     if(p_name == QString("initial")) {
         InitData_chessboard();
-        return;
+        pattern_seted = true;
     }
     if(p_name == QString("blinker")) {
         if(Golf_R >= 5 && Golf_C >= 5) {
             Golf_engine.set_cell(r + 1, c + 0,  true);
             Golf_engine.set_cell(r + 1, c + 1,  true);
             Golf_engine.set_cell(r + 1, c + 2,  true);
-            return;
+            pattern_seted = true;
         }        
         else {
             qDebug() << "board to small for pattern: " << p_name;
+            return;
         }
     }
     if(p_name == QString("glider")) {
@@ -156,13 +162,95 @@ void T_GolfBoardPreview::InitData_PatternName(QString p_name)
             Golf_engine.set_cell(r + 2, c + 0,  true);
             Golf_engine.set_cell(r + 2, c + 1,  true);
             Golf_engine.set_cell(r + 2, c + 2,  true);
-            return;
+            pattern_seted = true;
         }
         else {
             qDebug() << "board to small for pattern: " << p_name;
+            return;
         }
     }
-    qDebug() << "unknown pattern name" << p_name;
+
+    if(pattern_seted) {
+        this->getMinRectContainingPattern();
+    }
+    else {
+        qDebug() << "unknown pattern name" << p_name;
+    }
+
+}
+
+T_TopLeftBottomRight_RectTableArea T_GolfBoardPreview::getMinRectContainingPattern()
+{
+    qDebug() << __PRETTY_FUNCTION__;
+    // vector<size_t> examined_row;
+    // vector<size_t> examined_col;
+
+    // QList<int> examined_row1;
+    // QList<int> examined_col1;
+    // QList<int> examined_row2;
+    // QList<int> examined_col2;
+    int r1, r2, c1, c2;
+    r1 = -1;
+    for(int ri = 0; ri < board_preview_hight; ++ri){
+        for(int ci = 0; ci < board_preview_width; ++ci) {
+            // if(data(index(ri, ci)).toBool()) {
+            if(Golf_engine.get_cell(ri + starting_row_of_view, ci + starting_col_of_view)){
+                r1 = ri;
+                break;
+            }
+        }
+        if(r1 != -1) {
+            break;
+        }
+    }
+
+    r2 = -1;
+    for(int ri = board_preview_hight -1; ri >= 0; --ri){
+        for(int ci = 0; ci < board_preview_width; ++ci) {
+            // if(data(index(ri, ci)).toBool()) {
+            if(Golf_engine.get_cell(ri + starting_row_of_view, ci + starting_col_of_view)){
+                r2 = ri;
+                break;
+            }
+        }
+        if(r2 != -1) {
+            break;
+        }
+    }
+
+    c1 = -1;
+    for(int ci = 0; ci < board_preview_width; ++ci) {
+        for(int ri = 0; ri < board_preview_hight; ++ri){
+            // if(data(index(ri, ci)).toBool()) {
+            if(Golf_engine.get_cell(ri + starting_row_of_view, ci + starting_col_of_view)){
+                c1 = ci;
+                break;
+            }
+        }
+        if(c1 != -1) {
+            break;
+        }
+    }
+
+    c2 = -1;
+    for(int ci = board_preview_width - 1; ci >= 0; --ci) {
+        for(int ri = 0; ri < board_preview_hight; ++ri){
+            // if(data(index(ri, ci)).toBool()) {
+            if(Golf_engine.get_cell(ri + starting_row_of_view, ci + starting_col_of_view)){
+                c2 = ci;
+                break;
+            }
+        }
+        if(c2 != -1) {
+            break;
+        }
+    }
+
+    T_TopLeftBottomRight_RectTableArea tlbr;
+    tlbr.bottom_right = index(r2, c2);
+    tlbr.top_left = index(r1, c1);
+    qDebug() << "pattern area: r1:" << r1 << " c1:" << c1 << " r2:" << r2 << " c2:" << c2;
+    return tlbr;
 }
 
 // ----------------------- slots  ----------------------------------
