@@ -135,7 +135,7 @@ void T_GolfBoardPreview::InitData_chessboard()
 void T_GolfBoardPreview::InitData_PatternName(QString p_name)
 {
     qDebug() << "InitData_PatternName(" << p_name << ")";
-    Golf_engine.reset();    
+    //Golf_engine.reset();
     size_t r = starting_row_of_view + 1;
     size_t c = starting_col_of_view + 1;
     bool pattern_seted = false;

@@ -2,18 +2,23 @@
 #include "ui_mainwindow.h"
 #include <QtDebug>
 #include "T_TopLeftBottomRight_RectTableArea.h"
+#include "T_GolfPatternStorehouse.h"
 
 // #include <QDateTime>
 
 
 extern T_Golf_engine Golf_engine_global;
+extern T_GolfPatternStorehouse GolfStoreHouse_pattern_global;
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     Golf_engine(Golf_engine_global),
+    pattern_list(GolfStoreHouse_pattern_global),
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+
+    ui->listView_patterns->setModel(&pattern_list);
 
     ui->tableView->setModel(&board);
     int windowWidth = 800;
@@ -127,13 +132,29 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->horizontalScrollBar_period->setMinimum(1);
     ui->horizontalScrollBar_period->setValue(period);
 
-
     ui->tableView->show();
+    ui->listView_patterns->show();
+
+    sm_tv = ui->tableView->selectionModel();
 
     // qDebug() << QString("box_size: %1, table->height(): %2, board.rowCount(): %3")
     //             .arg(box_size)
     //             .arg(ui->tableView->height())
     //             .arg(board.rowCount());
+
+    /* prepare predefined patterns */
+    Golf_engine.reset();
+    slot_button_edit();
+    board.slot_GolfBoardSetPattern_blinker();
+    slot_button_edit();
+    Golf_engine.reset();
+    slot_button_edit();
+    board.slot_GolfBoardSetPattern_glider();
+    slot_button_edit();
+    Golf_engine.reset();
+    /* --------------------------- */
+
+
 
     qDebug() << QDateTime::currentDateTime().toString("yyyy.MM.dd hh:mm:ss");
 
@@ -164,6 +185,18 @@ MainWindow::MainWindow(QWidget *parent) :
                         SIGNAL(clicked()),
                         &board,
                         SLOT(slot_GolfBoardSetPattern_glider())
+                        );
+    qDebug() << "connecting pushButton_choose() -> this.slot_choose_pattern(): ";
+    qDebug() << connect(ui->pushButton_choose,
+                        SIGNAL(clicked()),
+                        this,
+                        SLOT(slot_choose_pattern())
+                        );
+    qDebug() << "connecting pushButton_pastePattern() -> this.slot_paste_pattern(): ";
+    qDebug() << connect(ui->pushButton_pastePattern,
+                        SIGNAL(clicked()),
+                        this,
+                        SLOT(slot_paste_pattern())
                         );
 
     // qDebug() << "connecting pushButton_EditSwitch() -> board.slot_GolfBoardSwitchEditor(): ";
@@ -249,8 +282,7 @@ void MainWindow::slot_button_edit()
     qDebug() << __PRETTY_FUNCTION__;
 
     if(ui->pushButton_EditSwitch->text() == QString("accept pattern")) {
-        QItemSelectionModel *sm = ui->tableView->selectionModel();
-        QModelIndexList isml = sm->selectedIndexes();
+        QModelIndexList isml = sm_tv->selectedIndexes();
         qDebug() << "isml.size(): " << isml.size();
         for(const QModelIndex& idx: isml) {
             qDebug() << "idx: " << idx;
@@ -269,29 +301,13 @@ void MainWindow::slot_button_edit()
             //     Golf_engine.set_cell(row, col, true);
             // }
         }
-        sm->clearSelection();
+        sm_tv->clearSelection();
         ui->pushButton_EditSwitch->setText(QString("edit pattern"));
         //not needed: this emit is made elsewere //emit board.dataChanged( board.index(0,0), board.index(Golf_ROWS - 1, Golf_COLS - 1) );
 
-        board.slot_GolfBoardSwitchEditor();
+        slot_keep_pattern();
 
-        /* printout pattern description */
-        QDebug out(QtDebugMsg);
-        out.nospace();
-        T_TopLeftBottomRight_RectTableArea tlbr = board.getMinRectContainingPattern();
-        out << "pattern description:\n";
-        out << "'" << board.pattern_name << "'\n";
-        for(int i = tlbr.top_left.row(); i < tlbr.bottom_right.row() + 1; ++i) {
-            for(int j = tlbr.top_left.column(); j < tlbr.bottom_right.column() + 1; ++j){
-                out << "[";
-                // out << ((board.data(board.index(i, j)).toBool()) ? QString("1") : QString("0"));
-                out << (Golf_engine.get_cell(i + board.starting_row_of_view, j + board.starting_col_of_view) ? QString("1") : QString("0"));
-                out << "]";
-            }
-            out << "\n";
-        }
-        out << "\n";
-        /* ------------------------ */
+        board.slot_GolfBoardSwitchEditor();
 
     }
     else {
@@ -336,6 +352,108 @@ void MainWindow::slot_set_torus(int b)
 {
     qDebug() << "slot_set_torus(" << b << ")";
     Golf_engine.Torus = static_cast<bool>(b);
+}
+
+void MainWindow::slot_choose_pattern()
+{
+    QDebug out(QtDebugMsg);
+    out.nospace();
+    for(auto& p: GolfStoreHouse_pattern_global.patterns) {
+        out << p.getName() << " h:" << p.getHight() << " w:" << p.getWidth() << "\n";
+        choosenPatternName = p.getName().c_str();
+        for(auto pi = p.begin(); pi != p.end(); ++pi) {
+            out << "[" << pi->row << "," << pi->col << "]";
+        }
+        out << "\n";
+    }
+
+    /* activate selection posibility */
+    board.slot_GolfBoardSwitchEditor();
+}
+
+void MainWindow::slot_paste_pattern()
+{
+    /* obtaining point of pasting */
+    QModelIndexList isml = sm_tv->selectedIndexes();
+    qDebug() << "isml.size(): " << isml.size();
+    size_t idx_r = 0;
+    size_t idx_c = 0;
+    if(isml.size() > 0) {
+        QModelIndex idx = isml[0];
+        idx_r = static_cast<size_t>(idx.row());
+        idx_c = static_cast<size_t>(idx.column());
+        if(idx_r > Golf_ROWS - 1) {  //case of no selection
+            idx_r = 0;
+        }
+        if(idx_c > Golf_COLS - 1) {
+            idx_c = 0;
+        }
+    }
+    qDebug() << "paste point: [" << idx_r << ", " << idx_c << "]";
+    sm_tv->clearSelection();
+
+    /* find pattern by name */
+    T_GolfPatternDescription* pd = pattern_list.GolfStoreHouse_pattern.getPattern(choosenPatternName.toStdString());
+
+    /* paste */
+    for(auto pi = pd->begin(); pi != pd->end(); ++pi) {
+        board.setData(
+            board.index(
+                pi->col + idx_c
+                ,
+                pi->row + idx_r
+                ),
+            QVariant(true), Qt::UserRole);
+    }
+
+    emit board.dataChanged( board.index(0,0), board.index(Golf_ROWS - 1, Golf_COLS - 1) );
+
+    /* disabling selection posibility */
+    board.slot_GolfBoardSwitchEditor();
+}
+
+void MainWindow::slot_keep_pattern()
+{
+    T_TopLeftBottomRight_RectTableArea tlbr = board.getMinRectContainingPattern();
+
+    T_GolfPatternDescription pd(board.pattern_name.toStdString());
+    for(int i = tlbr.top_left.row(); i < tlbr.bottom_right.row() + 1; ++i) {
+        for(int j = tlbr.top_left.column(); j < tlbr.bottom_right.column() + 1; ++j){
+            bool board_value = Golf_engine.get_cell(i + board.starting_row_of_view, j + board.starting_col_of_view);            
+            if(board_value) {
+                pd.addPoint(i,j);
+            }
+        }        
+    }
+    pattern_list.addPattern(pd);
+    // GolfStoreHouse_pattern_global.addPattern(pd);
+
+    // emit pattern_list.dataChanged(
+    //     // topLeft, bottomRight);
+    //     pattern_list.index(0,0), pattern_list.index(pattern_list.rowCount() - 1, 0),
+    //     QList<int>{Qt::DisplayRole});
+    /* ------------------------ */
+
+    slot_print_pattern(pd);
+}
+
+void MainWindow::slot_print_pattern(T_GolfPatternDescription &pt)
+{
+    /* printout pattern description */
+    QDebug out(QtDebugMsg);
+    out.nospace();
+    out << "pattern description:\n";
+    out << "'" << pt.getName() << "'\n";
+    for(size_t i = 0; i < pt.getHight() + 1; ++i) {
+        for(size_t j = 0; j < pt.getWidth(); ++j){
+            out << "[";
+            bool board_value = Golf_engine.get_cell(i + board.starting_row_of_view, j + board.starting_col_of_view);
+            out << ((board_value) ? QString("1") : QString("0"));
+            out << "]";
+        }
+        out << "\n";
+    }
+    out << "\n";
 }
 
 //SYGNAŁY SĄ

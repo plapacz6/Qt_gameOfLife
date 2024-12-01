@@ -27,6 +27,7 @@ LIBS += -lgtest -lgtest_main -lpthread
 
 SOURCES += \
     TQ_GolfBoardPreview.cpp \
+    TQ_GolfPatternsList.cpp \
     T_GolfIndex.cpp \
     T_GolfPatternDescription.cpp \
     T_GolfPatternStorehouse.cpp \
@@ -40,6 +41,7 @@ SOURCES += \
 
 HEADERS += \
     TQ_GolfBoardPreview.h \
+    TQ_GolfPatternsList.h \
     T_GolfIndex.h \
     T_GolfPatternDescription.h \
     T_GolfPatternStorehouse.h \

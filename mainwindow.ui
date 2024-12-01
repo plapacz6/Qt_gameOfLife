@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>690</width>
-    <height>589</height>
+    <width>711</width>
+    <height>615</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -71,7 +71,7 @@
        <property name="bottomMargin">
         <number>20</number>
        </property>
-       <item alignment="">
+       <item>
         <widget class="QTableView" name="tableView">
          <property name="enabled">
           <bool>true</bool>
@@ -385,7 +385,7 @@
          <item>
           <widget class="QListView" name="listView_patterns">
            <property name="enabled">
-            <bool>false</bool>
+            <bool>true</bool>
            </property>
            <property name="sizePolicy">
             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -396,13 +396,13 @@
            <property name="minimumSize">
             <size>
              <width>150</width>
-             <height>5</height>
+             <height>100</height>
             </size>
            </property>
            <property name="maximumSize">
             <size>
              <width>16777215</width>
-             <height>5</height>
+             <height>300</height>
             </size>
            </property>
           </widget>
@@ -410,7 +410,7 @@
          <item>
           <widget class="QPushButton" name="pushButton_choose">
            <property name="enabled">
-            <bool>false</bool>
+            <bool>true</bool>
            </property>
            <property name="sizePolicy">
             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -429,6 +429,13 @@
            </property>
            <property name="autoRepeatDelay">
             <number>300</number>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="pushButton_pastePattern">
+           <property name="text">
+            <string>paste pattern</string>
            </property>
           </widget>
          </item>
@@ -591,7 +598,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>690</width>
+     <width>711</width>
      <height>22</height>
     </rect>
    </property>
