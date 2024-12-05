@@ -405,6 +405,12 @@
              <height>300</height>
             </size>
            </property>
+           <property name="layoutDirection">
+            <enum>Qt::LayoutDirection::LeftToRight</enum>
+           </property>
+           <property name="itemAlignment">
+            <set>Qt::AlignmentFlag::AlignLeading</set>
+           </property>
           </widget>
          </item>
          <item>

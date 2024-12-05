@@ -31,13 +31,15 @@ SOURCES += \
     T_GolfIndex.cpp \
     T_GolfPatternDescription.cpp \
     T_GolfPatternStorehouse.cpp \
+    T_GolfPreviewCfg.cpp \
     T_TopLeftBottomRight_RectTableArea.cpp \
         main.cpp \
         mainwindow.cpp \
     T_Golf_engine.cpp \
     tests/test_T_GolfIndex.cpp \
     tests/test_T_GolfPatternDescription.cpp \
-    tests/test_T_GolfPatternStoreHouse.cpp
+    tests/test_T_GolfPatternStoreHouse.cpp \
+    tests/test_T_GolfPreviewCfg.cpp
 
 HEADERS += \
     TQ_GolfBoardPreview.h \
@@ -45,6 +47,7 @@ HEADERS += \
     T_GolfIndex.h \
     T_GolfPatternDescription.h \
     T_GolfPatternStorehouse.h \
+    T_GolfPreviewCfg.h \
     T_TopLeftBottomRight_RectTableArea.h \
         mainwindow.h \
     T_Golf_engine.h

@@ -9,6 +9,7 @@
 #include <QBrush>
 #include "T_Golf_engine.h"
 #include "T_TopLeftBottomRight_RectTableArea.h"
+#include "T_GolfPreviewCfg.h"
 
 enum : size_t {
     Golf_ROWS_ = 50,
@@ -23,9 +24,10 @@ class T_GolfBoardPreview : public QAbstractTableModel
     Q_OBJECT
 
     bool editable_state;
-    int board_preview_hight = static_cast<int>(Golf_ROWS);
-    int board_preview_width = static_cast<int>(Golf_COLS);
+    int board_preview_height;
+    int board_preview_width;
     T_Golf_engine& Golf_engine;
+    T_GolfPreviewCfg& pvcfg;
 public:
     QDebug dbg_out;
     // std::array<bool, Golf_DATASIZE> Golf_data;
@@ -37,7 +39,7 @@ public:
     QBrush cell_color_empty = QBrush(Qt::gray);
     QBrush cell_color_full = QBrush(Qt::darkBlue);
 
-    explicit T_GolfBoardPreview(QObject *parent = nullptr);
+    explicit T_GolfBoardPreview(T_Golf_engine& ge_, T_GolfPreviewCfg& pvcfg_, QObject *parent = nullptr);
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     int columnCount(const QModelIndex &parent = QModelIndex()) const override;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;

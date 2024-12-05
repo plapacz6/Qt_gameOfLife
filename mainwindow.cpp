@@ -8,11 +8,13 @@
 
 
 extern T_Golf_engine Golf_engine_global;
+extern T_GolfPreviewCfg GolfPrevieCfg_global; //(Golf_engine_global);
 extern T_GolfPatternStorehouse GolfStoreHouse_pattern_global;
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     Golf_engine(Golf_engine_global),
+    board(Golf_engine_global, GolfPrevieCfg_global),
     pattern_list(GolfStoreHouse_pattern_global),
     ui(new Ui::MainWindow)
 {
@@ -134,8 +136,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->tableView->show();
     ui->listView_patterns->show();
-
     sm_tv = ui->tableView->selectionModel();
+    sm_pl = ui->listView_patterns->selectionModel();
 
     // qDebug() << QString("box_size: %1, table->height(): %2, board.rowCount(): %3")
     //             .arg(box_size)
@@ -146,11 +148,17 @@ MainWindow::MainWindow(QWidget *parent) :
     Golf_engine.reset();
     slot_button_edit();
     board.slot_GolfBoardSetPattern_blinker();
+    choosenPatternName = board.pattern_name;
+    slot_keep_pattern();
     slot_button_edit();
+
     Golf_engine.reset();
     slot_button_edit();
     board.slot_GolfBoardSetPattern_glider();
+    choosenPatternName = board.pattern_name;
+    slot_keep_pattern();
     slot_button_edit();
+
     Golf_engine.reset();
     /* --------------------------- */
 
@@ -356,6 +364,7 @@ void MainWindow::slot_set_torus(int b)
 
 void MainWindow::slot_choose_pattern()
 {
+    qDebug() << __PRETTY_FUNCTION__;
     QDebug out(QtDebugMsg);
     out.nospace();
     for(auto& p: GolfStoreHouse_pattern_global.patterns) {
@@ -367,12 +376,20 @@ void MainWindow::slot_choose_pattern()
         out << "\n";
     }
 
+    int idx_r = 0;
+    QModelIndexList isml = sm_pl->selectedIndexes();
+    if(isml.size()) {
+        idx_r = isml[0].row();
+    }
+    sm_pl->clearSelection();
+    choosenPatternName = GolfStoreHouse_pattern_global.getPattern(idx_r)->getName().c_str();
     /* activate selection posibility */
     board.slot_GolfBoardSwitchEditor();
 }
 
 void MainWindow::slot_paste_pattern()
 {
+    qDebug() << __PRETTY_FUNCTION__;
     /* obtaining point of pasting */
     QModelIndexList isml = sm_tv->selectedIndexes();
     qDebug() << "isml.size(): " << isml.size();
@@ -414,9 +431,10 @@ void MainWindow::slot_paste_pattern()
 
 void MainWindow::slot_keep_pattern()
 {
+    qDebug() << __PRETTY_FUNCTION__;
     T_TopLeftBottomRight_RectTableArea tlbr = board.getMinRectContainingPattern();
 
-    T_GolfPatternDescription pd(board.pattern_name.toStdString());
+    T_GolfPatternDescription pd(choosenPatternName.toStdString()); //board.pattern_name.toStdString());
     for(int i = tlbr.top_left.row(); i < tlbr.bottom_right.row() + 1; ++i) {
         for(int j = tlbr.top_left.column(); j < tlbr.bottom_right.column() + 1; ++j){
             bool board_value = Golf_engine.get_cell(i + board.starting_row_of_view, j + board.starting_col_of_view);            
@@ -425,6 +443,7 @@ void MainWindow::slot_keep_pattern()
             }
         }        
     }
+
     pattern_list.addPattern(pd);
     // GolfStoreHouse_pattern_global.addPattern(pd);
 
@@ -439,6 +458,7 @@ void MainWindow::slot_keep_pattern()
 
 void MainWindow::slot_print_pattern(T_GolfPatternDescription &pt)
 {
+    qDebug() << __PRETTY_FUNCTION__;
     /* printout pattern description */
     QDebug out(QtDebugMsg);
     out.nospace();

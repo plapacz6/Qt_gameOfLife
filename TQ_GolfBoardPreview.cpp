@@ -11,26 +11,17 @@ using namespace std;
 
 extern T_Golf_engine Golf_engine_global;
 
-T_GolfBoardPreview::T_GolfBoardPreview(QObject *parent)
-    :
+T_GolfBoardPreview::T_GolfBoardPreview(T_Golf_engine& ge_, T_GolfPreviewCfg& pvcfg_, QObject *parent)
+    :    
     QAbstractTableModel(parent),
-    Golf_engine(Golf_engine_global),
+    Golf_engine{ge_},
+    pvcfg{pvcfg_},
     dbg_out(QtDebugMsg)
-{
-    // ptr_Golf_data = &(Golf_engine.data_new);     api changed
-    starting_row_of_view = 0;
-    starting_col_of_view = 0;
-
-    slot_GolfBoardSetPreviewStartRow(
-        (Golf_R > Golf_ROWS)
-            ? (Golf_R - Golf_ROWS) / 2
-            :   0
-        );
-    slot_GolfBoardSetPreviewStartCol(
-        (Golf_C > Golf_COLS)
-            ? (Golf_C - Golf_COLS) / 2
-            :   0
-        );
+{    
+    board_preview_height = static_cast<int>(pvcfg.height());
+    board_preview_width = static_cast<int>(pvcfg.width());
+    starting_row_of_view = pvcfg.row();
+    starting_col_of_view = pvcfg.col();
 
     pattern_name = QString("initial");
 
@@ -41,11 +32,11 @@ T_GolfBoardPreview::T_GolfBoardPreview(QObject *parent)
 
 int T_GolfBoardPreview::rowCount(const QModelIndex & /*parent*/) const
 {
-    return Golf_ROWS;
+    return board_preview_height; //Golf_ROWS;
 }
 int T_GolfBoardPreview::columnCount(const QModelIndex & /*parent*/) const
 {
-    return Golf_COLS;
+    return board_preview_width; //Golf_COLS;
 }
 QVariant T_GolfBoardPreview::data(const QModelIndex &index, int role) const
 {
@@ -191,7 +182,7 @@ T_TopLeftBottomRight_RectTableArea T_GolfBoardPreview::getMinRectContainingPatte
     // QList<int> examined_col2;
     int r1, r2, c1, c2;
     r1 = -1;
-    for(int ri = 0; ri < board_preview_hight; ++ri){
+    for(int ri = 0; ri < board_preview_height; ++ri){
         for(int ci = 0; ci < board_preview_width; ++ci) {
             // if(data(index(ri, ci)).toBool()) {
             if(Golf_engine.get_cell(ri + starting_row_of_view, ci + starting_col_of_view)){
@@ -205,7 +196,7 @@ T_TopLeftBottomRight_RectTableArea T_GolfBoardPreview::getMinRectContainingPatte
     }
 
     r2 = -1;
-    for(int ri = board_preview_hight -1; ri >= 0; --ri){
+    for(int ri = board_preview_height -1; ri >= 0; --ri){
         for(int ci = 0; ci < board_preview_width; ++ci) {
             // if(data(index(ri, ci)).toBool()) {
             if(Golf_engine.get_cell(ri + starting_row_of_view, ci + starting_col_of_view)){
@@ -220,7 +211,7 @@ T_TopLeftBottomRight_RectTableArea T_GolfBoardPreview::getMinRectContainingPatte
 
     c1 = -1;
     for(int ci = 0; ci < board_preview_width; ++ci) {
-        for(int ri = 0; ri < board_preview_hight; ++ri){
+        for(int ri = 0; ri < board_preview_height; ++ri){
             // if(data(index(ri, ci)).toBool()) {
             if(Golf_engine.get_cell(ri + starting_row_of_view, ci + starting_col_of_view)){
                 c1 = ci;
@@ -234,7 +225,7 @@ T_TopLeftBottomRight_RectTableArea T_GolfBoardPreview::getMinRectContainingPatte
 
     c2 = -1;
     for(int ci = board_preview_width - 1; ci >= 0; --ci) {
-        for(int ri = 0; ri < board_preview_hight; ++ri){
+        for(int ri = 0; ri < board_preview_height; ++ri){
             // if(data(index(ri, ci)).toBool()) {
             if(Golf_engine.get_cell(ri + starting_row_of_view, ci + starting_col_of_view)){
                 c2 = ci;
@@ -292,7 +283,10 @@ void T_GolfBoardPreview::slot_GolfBoardStateUpdate()
 {
     qDebug() << __PRETTY_FUNCTION__;
 
-    emit dataChanged( index(0,0), index(Golf_ROWS - 1, Golf_COLS - 1) );
+    emit dataChanged( index(0,0), index(
+        board_preview_height - 1,
+        board_preview_width - 1  // Golf_ROWS - 1, Golf_COLS - 1
+    ) );
 }
 
 void T_GolfBoardPreview::slot_GolfBoardSetPattern_blinker()
@@ -319,9 +313,9 @@ void T_GolfBoardPreview::slot_GolfBoardSetPreviewStartRow(int y)
 {
     qDebug() << __PRETTY_FUNCTION__ << "(int: " << y << ")";
     assert(y >= 0);
-    assert(y + (board_preview_hight - 1) < Golf_engine.get_rows());  //index + size -> first index after last allowed
+    assert(y + (board_preview_height - 1) < Golf_engine.get_rows());  //index + size -> first index after last allowed
 
-    if(board_preview_hight + y < Golf_engine.get_rows()) {
+    if(board_preview_height + y < Golf_engine.get_rows()) {
         starting_col_of_view = y;
     }
     else {
