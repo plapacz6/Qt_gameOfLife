@@ -32,7 +32,8 @@ QVariant TQ_GolfPatternsList::data(const QModelIndex &index, int role) const
         return QVariant();
     }
 
-    if(true) { //|| role == Qt::DisplayRole) {
+    // if(true) { //|| role == Qt::DisplayRole) {   //!!!!!!!!!!!!!!!!!!!!! problem
+    if (role == Qt::DisplayRole) {
         string name = GolfStoreHouse_pattern.patterns[index.row()].getName();
         qDebug() << "index.row():" << index.row() << " name:" << name;
         // return QString(name.c_str());
